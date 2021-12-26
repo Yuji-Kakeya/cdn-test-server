@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+        integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+        crossorigin="anonymous"></script>
+
+    <script type="text/javascript">
+        function gotoPage() {
+            let setForm = document.getElementById("setForm");
+            setForm.action = this.id.replace("_", ".");
+            setForm.target = "result_iframe";
+            for (let i of document.getElementsByName("requestMethod")) {
+                if (i.checked) {
+                    setForm.method = i.value;
+                    break;
+                }
+            };
+
+            setForm.submit();
+
+            return false;
+        }
+    </script>
+
+    <style>
+        h1 {
+            font-size: 32px;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            font-size: 20px;
+        }
+    </style>
+    <title>CDN Test Server</title>
+</head>
+
+<body class="container">
+    <div class="row">
+        <div class="col-sm-12">
+            <h1>CDN Test Server</h1>
+        </div>
+        <div class="col-sm-1"></div>
+        <div class="col-sm-11">
+            <form id="setForm" method="POST">
+                <div>
+                    <h2>1. Request Method</h2>
+                    <ul>
+                        <li><label><input type="radio" name="requestMethod" value="GET" checked>GET</label></li>
+                        <li><label><input type="radio" name="requestMethod" value="POST">POST</label></li>
+                    </ul>
+                </div>
+                <div>
+                    <h2>2. Response Cache-Control Header: Cacheability</h2>
+                    <ul>
+                        <li><label><input type="radio" name="cacheability" value="">No any directives</label></li>
+                        <li><label><input type="radio" name="cacheability" value="public" checked>public</label></li>
+                        <li><label><input type="radio" name="cacheability" value="private">private</label></li>
+                        <li><label><input type="radio" name="cacheability" value="no-cache">no-cache</label></li>
+                        <li><label><input type="radio" name="cacheability" value="no-store">no-store</label></li>
+                    </ul>
+                </div>
+                <div>
+                    <h2>3. Response Cache-Control Header: Expiration</h2>
+                    <ul>
+                        <li><label>max-age:<input type="number" name="max-age" id="max-age" value=""></label></li>
+                        <li><label>s-maxage:<input type="number" name="s-maxage" id="s-maxage" value=""></label></li>
+                        <li><label>max-stale:<input type="number" name="max-stale" id="max-stale" value=""></label></li>
+                        <li><label>min-fresh:<input type="number" name="min-fresh" id="min-fresh" value=""></label></li>
+                        <li><label>stale-while-revalidate:<input type="number" name="stale-while-revalidate"
+                                    id="stale-while-revalidate" value=""></label></li>
+                        <li><label>stale-if-error:<input type="number" name="stale-if-error" id="stale-if-error"
+                                    value=""></label></li>
+                    </ul>
+                </div>
+                <div>
+                    <h2>4. Response Last-Modified Header</h2>
+                    <ul>
+                        <li><label>Include Last-Modified:<input type="checkbox" name="last-modified" id="last-modified"
+                                    value="true" checked></label>
+                        </li>
+                        <li><label>Year: Current Time <input type="number" name="subYear" id="subYear" value="0" max="0"
+                                    min="-10"></label>
+                        </li>
+                        <li><label>Month: Current Time <input type="number" name="subMonth" id="subMonth" value="0"
+                                    max="0" min="-11"></label></li>
+                        <li><label>Day: Current Time <input type="number" name="subDate" id="subDate" value="0" max="0"
+                                    min="-30"></label>
+                        </li>
+                        <li><label>Hours: Current Time <input type="number" name="subHours" id="subHours" value="0"
+                                    max="0" min="-23"></label></li>
+                        <li><label>Minutes: Current Time <input type="number" name="subMinutes" id="subMinutes"
+                                    value="0" max="0" min="-59"></label></li>
+                    </ul>
+                </div>
+                <div>
+                    <h2>5. Response ETag Header</h2>
+                    <ul>
+                        <li><label>Include Etag:<input type="checkbox" name="etag" id="etag" value="true"
+                                    checked></label></li>
+                    </ul>
+                </div>
+                <div>
+                    <h2>5. Use Basic Authentication(username: "test" / password: "test")</h2>
+                    <ul>
+                        <li><label>Use Basic Authentication:<input type="checkbox" name="auth" id="auth"
+                                    value="true"></label></li>
+                    </ul>
+                </div>
+                <div>
+                    <h2>6. Go to Web Page</h2>
+                    <ul>
+                        <li><button type="button" id="dynamic.html" onclick="gotoPage.call(this);"
+                                class="btn btn-link">Sample HTML(Dynamic)</button></li>
+                        <li><button type="button" id="sample1_jpg" onclick="gotoPage.call(this);"
+                                class="btn btn-link">Sample JPEG 1</button></li>
+                        <li><button type="button" id="sample1_png" onclick="gotoPage.call(this)"
+                                class="btn btn-link">Sample PNG 1</button></li>
+                        <li><button type="button" id="sample1_pdf" onclick="gotoPage.call(this)"
+                                class="btn btn-link">Sample PDF 1</button></li>
+                        <li><button type="button" id="sample2_jpg" onclick="gotoPage.call(this)"
+                                class="btn btn-link">Sample JPEG 2</button></li>
+                        <li><button type="button" id="sample2_png" onclick="gotoPage.call(this)"
+                                class="btn btn-link">Sample PNG 2</button></li>
+                        <li><button type="button" id="sample2_pdf" onclick="gotoPage.call(this)"
+                                class="btn btn-link">Sample PDF 2</button></li>
+                        <li><button type="button" id="sample1_mp3" onclick="gotoPage.call(this)"
+                                class="btn btn-link">Sample MP3</button></li>
+                        <li><button type="button" id="sample2_html" onclick="gotoPage.call(this)"
+                                class="btn btn-link">Sample HTML with CSS/JavaScript</button></li>
+                    </ul>
+                </div>
+            </form>
+            <div class="col-sm-12">
+                <iframe name="result_iframe" class="col-sm-12"></iframe>
+            </div>
+        </div>
+        <div class="col-sm-1"></div>
+        <div class="col-sm-12">
+            <h2>Link</h2>
+            <ul>
+                <li><a href="https://developer.mozilla.org/ja/docs/Web/HTTP/Headers/Cache-Control">Cache-Control - HTTP
+                        MDN</a></li>
+            </ul>
+        </div>
+    </div>
+    <script>
+        document.getElementById("setForm").addEventListener("submit", (e) => { e.stopPropagation(); e.preventDefault(); alert("sub"); return false; })
+    </script>
+
+</body>
+
+</html>
