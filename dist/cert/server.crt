@@ -1,0 +1,72 @@
+Certificate:
+    Data:
+        Version: 3 (0x2)
+        Serial Number: 0 (0x0)
+    Signature Algorithm: sha256WithRSAEncryption
+        Issuer: C=JP, ST=Kanagawa, L=Yokohama, O=example, CN=test-ca.local
+        Validity
+            Not Before: Dec 26 13:17:45 2021 GMT
+            Not After : Mar 30 13:17:45 2024 GMT
+        Subject: C=JP, ST=example, L=example, O=example, CN=dev.sample.com
+        Subject Public Key Info:
+            Public Key Algorithm: rsaEncryption
+                Public-Key: (2048 bit)
+                Modulus:
+                    00:af:08:35:df:ee:0b:1a:26:b7:50:5b:6f:14:dc:
+                    04:74:cf:de:8f:f5:df:2b:4c:1f:35:1b:70:a1:a9:
+                    28:46:d2:8e:d2:1e:92:3b:7f:c0:a8:b5:3a:ee:98:
+                    12:20:9d:bb:d9:1c:d5:fd:12:e7:c5:53:40:71:9d:
+                    f6:3e:80:6a:72:0a:84:0d:75:32:47:fc:44:cb:b4:
+                    6d:5e:65:79:44:38:74:c2:fb:fa:8c:cb:44:30:1a:
+                    0d:4b:6d:d9:74:2d:fc:9c:89:e2:7a:4c:72:c0:75:
+                    32:25:fc:14:73:50:09:bb:bb:c2:45:1b:02:bf:be:
+                    65:f3:53:5d:66:eb:ff:1f:5d:eb:ec:cc:52:4e:80:
+                    91:66:f9:34:08:bd:19:00:28:e9:ae:a2:65:59:9a:
+                    fa:65:40:e7:44:d4:0b:8d:a9:d6:ed:99:ce:6a:bb:
+                    f9:ec:16:44:3e:e9:66:51:50:b4:35:cf:dc:e9:d1:
+                    27:d6:59:39:16:5b:a0:b8:2f:f1:78:32:e0:f4:8e:
+                    01:9f:f5:1c:4e:92:c4:3c:46:08:70:23:f1:18:36:
+                    eb:7e:c1:cb:75:63:50:be:8c:89:a9:5a:12:f6:a5:
+                    84:9d:ad:11:a8:6b:c9:09:e7:e1:b2:44:35:8f:3f:
+                    cb:fa:69:63:c3:18:7f:a2:62:44:76:3a:06:15:04:
+                    5c:b7
+                Exponent: 65537 (0x10001)
+        X509v3 extensions:
+            X509v3 Subject Alternative Name: 
+                DNS:dev.sample.com
+    Signature Algorithm: sha256WithRSAEncryption
+         06:9c:ce:5c:20:e0:46:a9:f9:ad:01:52:ef:7b:e1:82:21:91:
+         02:b4:ef:a4:97:a3:70:3b:39:a7:e4:7c:c7:37:24:7a:8b:b5:
+         50:56:3c:de:1b:1f:40:50:3e:73:cc:28:64:62:3b:c5:1e:eb:
+         c3:04:47:36:95:ce:a5:70:fe:19:2f:be:9a:e2:f4:bb:04:95:
+         a4:b5:73:72:92:c8:f6:31:31:94:76:d8:0d:eb:87:4a:68:5a:
+         85:29:23:bd:8f:55:1a:57:27:89:5b:d8:cb:78:35:9d:94:0e:
+         f9:0c:d7:cd:19:f7:8a:f9:a8:cf:b0:21:2f:28:e4:16:20:ba:
+         e2:3f:51:82:84:f9:e5:b0:dc:7a:98:50:fd:90:59:fb:e7:23:
+         55:2f:87:1c:7f:0d:20:0a:18:13:89:b5:90:fc:d2:d9:db:cc:
+         ac:49:c1:84:78:08:dd:06:69:0c:18:40:32:ba:a7:7d:38:77:
+         e1:f2:7d:3e:da:38:6e:ce:e0:13:9d:b2:e9:99:d5:dd:97:99:
+         f8:ef:fb:28:1d:56:62:a5:3c:32:6e:8e:9d:99:46:31:25:ce:
+         33:6f:89:f2:e8:a2:a7:ba:f4:2b:4d:e0:a8:ce:20:23:ff:17:
+         b8:65:83:1e:f7:ef:a6:1a:ee:17:e6:80:50:11:35:37:15:39:
+         74:03:e7:16
+-----BEGIN CERTIFICATE-----
+MIIDUTCCAjmgAwIBAgIBADANBgkqhkiG9w0BAQsFADBdMQswCQYDVQQGEwJKUDER
+MA8GA1UECAwIS2FuYWdhd2ExETAPBgNVBAcMCFlva29oYW1hMRAwDgYDVQQKDAdl
+eGFtcGxlMRYwFAYDVQQDDA10ZXN0LWNhLmxvY2FsMB4XDTIxMTIyNjEzMTc0NVoX
+DTI0MDMzMDEzMTc0NVowXDELMAkGA1UEBhMCSlAxEDAOBgNVBAgMB2V4YW1wbGUx
+EDAOBgNVBAcMB2V4YW1wbGUxEDAOBgNVBAoMB2V4YW1wbGUxFzAVBgNVBAMMDmRl
+di5zYW1wbGUuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEArwg1
+3+4LGia3UFtvFNwEdM/ej/XfK0wfNRtwoakoRtKO0h6SO3/AqLU67pgSIJ272RzV
+/RLnxVNAcZ32PoBqcgqEDXUyR/xEy7RtXmV5RDh0wvv6jMtEMBoNS23ZdC38nIni
+ekxywHUyJfwUc1AJu7vCRRsCv75l81NdZuv/H13r7MxSToCRZvk0CL0ZACjprqJl
+WZr6ZUDnRNQLjanW7ZnOarv57BZEPulmUVC0Nc/c6dEn1lk5FluguC/xeDLg9I4B
+n/UcTpLEPEYIcCPxGDbrfsHLdWNQvoyJqVoS9qWEna0RqGvJCefhskQ1jz/L+mlj
+wxh/omJEdjoGFQRctwIDAQABox0wGzAZBgNVHREEEjAQgg5kZXYuc2FtcGxlLmNv
+bTANBgkqhkiG9w0BAQsFAAOCAQEABpzOXCDgRqn5rQFS73vhgiGRArTvpJejcDs5
+p+R8xzckeou1UFY83hsfQFA+c8woZGI7xR7rwwRHNpXOpXD+GS++muL0uwSVpLVz
+cpLI9jExlHbYDeuHSmhahSkjvY9VGlcniVvYy3g1nZQO+QzXzRn3ivmoz7AhLyjk
+FiC64j9RgoT55bDcephQ/ZBZ++cjVS+HHH8NIAoYE4m1kPzS2dvMrEnBhHgI3QZp
+DBhAMrqnfTh34fJ9Pto4bs7gE52y6ZnV3ZeZ+O/7KB1WYqU8Mm6OnZlGMSXOM2+J
+8uiip7r0K03gqM4gI/8XuGWDHvfvphruF+aAUBE1NxU5dAPnFg==
+-----END CERTIFICATE-----

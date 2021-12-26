@@ -1,6 +1,8 @@
 const HTTP_PORT = 80;
+const HTTPS_PORT = 443;
 
-import { execSync } from 'child_process';
+import { execSync } from "child_process";
+import fs from "fs";
 import express from "express";
 import https from "https";
 import auth from "basic-auth";
@@ -10,6 +12,14 @@ const app = express();
 app.listen(HTTP_PORT);
 app.use(express.urlencoded({extended: true}));
 app.use(express.json());
+
+
+const options = {
+  key:  fs.readFileSync(`${__dirname}/cert/server.key`),
+  cert: fs.readFileSync(`${__dirname}/cert/server.crt`)
+};
+let server = https.createServer(options,app);
+server.listen(HTTPS_PORT);
 
 //Const
 const PUBLIC = (`${__dirname}/pub`);
@@ -118,4 +128,5 @@ app.post("/dynamic.html", (req, res) => {
     res.status(200).end(generateDynamicHTML());
 });
 
-console.log(`Running on port ${HTTP_PORT}!`);
+console.log(`Running HTTP Server on port ${HTTP_PORT}!`);
+console.log(`Running HTTPS Server on port ${HTTPS_PORT}!`);

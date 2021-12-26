@@ -13,14 +13,23 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var HTTP_PORT = 80;
+var HTTPS_PORT = 443;
 var child_process_1 = require("child_process");
+var fs_1 = __importDefault(require("fs"));
 var express_1 = __importDefault(require("express"));
+var https_1 = __importDefault(require("https"));
 var basic_auth_1 = __importDefault(require("basic-auth"));
 var path_1 = __importDefault(require("path"));
 var app = (0, express_1.default)();
 app.listen(HTTP_PORT);
 app.use(express_1.default.urlencoded({ extended: true }));
 app.use(express_1.default.json());
+var options = {
+    key: fs_1.default.readFileSync(__dirname + "/cert/server.key"),
+    cert: fs_1.default.readFileSync(__dirname + "/cert/server.crt")
+};
+var server = https_1.default.createServer(options, app);
+server.listen(HTTPS_PORT);
 //Const
 var PUBLIC = (__dirname + "/pub");
 var HEADER_CACHE_CONTROL = "Cache-Control";
@@ -114,4 +123,5 @@ app.post("/dynamic.html", function (req, res) {
     res.set(options);
     res.status(200).end(generateDynamicHTML());
 });
-console.log("Running on port " + HTTP_PORT + "!");
+console.log("Running HTTP Server on port " + HTTP_PORT + "!");
+console.log("Running HTTPS Server on port " + HTTPS_PORT + "!");
