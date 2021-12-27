@@ -61,7 +61,7 @@ const modifyLastUpdate = (req: { subYear: string, subMonth: string, subDate: str
 const createHeaders = (req: any, path: string|null) => {
     let cacheControls = req.cacheability == "" ? [] : [req.cacheability];
     for (let key in req) {
-        if (isNum(req[key])) {
+        if (isNum(req[key]) && !/^sub/.test(key)) {
             cacheControls.push(`${key}=${req[key]}`);
         }
     }

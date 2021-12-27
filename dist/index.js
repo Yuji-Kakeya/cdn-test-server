@@ -68,7 +68,7 @@ var createHeaders = function (req, path) {
     var _a;
     var cacheControls = req.cacheability == "" ? [] : [req.cacheability];
     for (var key in req) {
-        if (isNum(req[key])) {
+        if (isNum(req[key]) && !/^sub/.test(key)) {
             cacheControls.push(key + "=" + req[key]);
         }
     }
