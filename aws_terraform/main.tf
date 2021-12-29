@@ -180,6 +180,7 @@ resource "aws_ecs_task_definition" "main" {
 [
   {
     "name": "cdn-test-server",
+    "command": ["www.hogehoge.com"],
     "image": "public.ecr.aws/k2n2r9f5/cdn-test-server",
     "portMappings": [
       {
