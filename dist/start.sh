@@ -1,5 +1,5 @@
-#!/bin/bash
-
+#!/bin/sh
+echo $1
 #CONST
 PASSWORD=1234
 C=JP
@@ -14,3 +14,4 @@ openssl req -new -key ./cert/server.key -out ./cert/_request.csr -subj "/C=${C}/
 openssl ca -batch -in ./cert/_request.csr -out ./cert/server.crt -days 825 -config ./cert/RootCA/conf.cnf -extfile ./cert/_san.conf 
 rm -rf _*.*
 
+npm start
