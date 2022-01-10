@@ -1,1 +1,1 @@
-docker run --name cdn-test-server -itd -p 80:80 -p 443:443 cdn-test-server www.example.com
+docker run --rm -it -p 80:80 -p 443:443 -e FQDN=www.example.com cdn-test-server
