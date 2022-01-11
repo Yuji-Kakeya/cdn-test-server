@@ -1,0 +1,17 @@
+apiVersion: skaffold/v2beta26
+kind: Config
+metadata:
+  name: cdn-test-server
+build:
+  artifacts:
+  - image: cdn-test-server
+    docker:
+      dockerfile: ./Dockerfile
+  local:
+    push: false
+  tagPolicy:
+    dateTime: {}
+deploy:
+  kubectl:
+    manifests:
+    - ./dev/k8s.yaml

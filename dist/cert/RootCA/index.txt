@@ -1,1 +1,0 @@
-V	240414060924Z		00	unknown	/C=JP/ST=example/L=example/O=example/CN=www.example.com

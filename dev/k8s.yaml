@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: cdn-test-server
+  name: cdn-test-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cdn-test-server
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: cdn-test-server
+    spec:
+      containers:
+      - image: cdn-test-server
+        name: cdn-test-server
+        imagePullPolicy: IfNotPresent
+        env:
+          - name: FQDN
+            value: 127.0.0.1
+        ports:
+          - containerPort: 80
+            name: http
+          - containerPort: 443
+            name: https
+        resources: {}
+status: {}
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    app: cdn-test-server
+  name: cdn-test-server
+spec:
+  ports:
+  - port: 443
+    protocol: TCP
+    targetPort: 443
+    name: https
+  - port: 80
+    protocol: TCP
+    targetPort: 80
+    name: http
+  selector:
+    app: cdn-test-server
+  type: LoadBalancer
+status:
+  loadBalancer: {}

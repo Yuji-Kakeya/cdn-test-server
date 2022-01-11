@@ -13,7 +13,6 @@ app.listen(HTTP_PORT);
 app.use(express.urlencoded({extended: true}));
 app.use(express.json());
 
-
 const options = {
   key:  fs.readFileSync(`${__dirname}/cert/server.key`),
   cert: fs.readFileSync(`${__dirname}/cert/server.crt`)
@@ -95,9 +94,6 @@ app.use((req, res, next) => {
     }
     return next();
 });
-
-
-
 
 //Express Routing
 app.get("/", (_, res) => {
