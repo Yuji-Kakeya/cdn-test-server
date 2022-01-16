@@ -26,12 +26,12 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Build an image from Docker file
-        run: DOCKER_BUILDKIT=1 docker image build . -f Dockerfile --tag ${{secrets.DOCKER_USERNAME}}/cdn-test-server:${{github.run_number}}
+        run: DOCKER_BUILDKIT=1 docker image build . -f Dockerfile --tag ${{secrets.DOCKER_USERNAME}}/cdn-test-server:latest
       
       - name: Scan
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: ${{secrets.DOCKER_USERNAME}}/cdn-test-server:${{github.run_number}}
+          image-ref: ${{secrets.DOCKER_USERNAME}}/cdn-test-server:latest
           format: table
           exit-code: 1
           ignore-unfixed: true
@@ -40,5 +40,5 @@ jobs:
       - name: Push
         run: |
           docker login docker.io --username ${{secrets.DOCKER_USERNAME}} --password ${{secrets.DOCKER_PASSWORD}}
-          docker image push ${{secrets.DOCKER_USERNAME}}/cdn-test-server:${{ github.run_number}}
+          docker image push ${{secrets.DOCKER_USERNAME}}/cdn-test-server:latest
 
