@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: cdn-test-server
+  name: cdn-test-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cdn-test-server
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: cdn-test-server
+    spec:
+      containers:
+      - image: cdn-test-server
+        name: cdn-test-server
+        ports:
+        - containerPort: 80
+        resources: {}
+status: {}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    app: cdn-test-server
+  name: cdn-test-server
+spec:
+  ports:
+  - port: 80
+    name: http
+    protocol: TCP
+    targetPort: 80
+  - port: 443
+    name: https
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: cdn-test-server
+status:
+  loadBalancer: {}
