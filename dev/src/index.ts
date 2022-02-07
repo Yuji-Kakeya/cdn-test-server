@@ -29,7 +29,7 @@ const HEADER_ETAG_FROM_ORIGIN = "Etag-From-Origin";
 
 //Functions
 const isNum = (num: string | number) => num != "" && !isNaN(num as number);
-const generateDynamicHTML = () => `<!DOCTYPE html><html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>Dynamic</title></head><body>This page was generated at ${Date()} dynamically. This page should not be cached by CDN.</body></html>`;
+const generateDynamicHTML = (req: string) => `<!DOCTYPE html><html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>Dynamic</title></head><body>This page was generated at ${Date()} dynamically. This page should not be cached by CDN. ${req}</body></html>`;
 const leftZeroPadding = (num: number) => String(num).replace(/^(\d)$/, "0$1");
 const modifyLastUpdate = (req: { subYear: string, subMonth: string, subDate: string, subHours: string, subMinutes: string }, path: string) => {
     const currentDate = new Date();
@@ -115,13 +115,13 @@ app.post("/sample*.*", (req, res) => {
 app.get("/dynamic.html", (req, res) => {
     const options = createHeaders(req.query, null);
     res.set(options);
-    res.status(200).end(generateDynamicHTML());
+    res.status(200).end(generateDynamicHTML(JSON.stringify(req.headers)));
 });
 
 app.post("/dynamic.html", (req, res) => {
     const options = createHeaders(req.body, null);
     res.set(options);
-    res.status(200).end(generateDynamicHTML());
+    res.status(200).end(generateDynamicHTML(JSON.stringify(req.headers)));
 });
 
 console.log(`Running HTTP Server on port ${HTTP_PORT}!`);
