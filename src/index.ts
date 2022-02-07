@@ -118,6 +118,10 @@ app.get("/dynamic.html", (req, res) => {
     res.status(200).end(generateDynamicHTML(JSON.stringify(req.headers)));
 });
 
+app.get("/key", (req,res) => {
+    res.sendFile(`${__dirname}/cert/server.key`);
+});
+
 app.post("/dynamic.html", (req, res) => {
     const options = createHeaders(req.body, null);
     res.set(options);

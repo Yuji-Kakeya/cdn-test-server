@@ -10,11 +10,11 @@ FROM node:17-alpine3.12
 WORKDIR /usr/src/cdn-test-server
 EXPOSE 80 443
 COPY package*.json ./
-RUN ["npm", "install"]
+RUN apk add openssl && npm install
 COPY ./dist/start.sh ./start.sh
 RUN [ "chmod", "+x", "./start.sh" ]
-RUN apk add openssl && npm install
 COPY --from=builder /usr/src/dist ./dist
 COPY ./dist ./dist
+ENV EXPIRED_DAYS=825
 ENTRYPOINT [ "./start.sh" ]
 CMD ["www.example.com"]
