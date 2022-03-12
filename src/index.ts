@@ -134,18 +134,34 @@ app.get("/", (_, res) => {
     res.sendFile(`${PUBLIC}/index.html`);
 });
 
-app.all("/dynamic.html", (req, res) => {
+app.get("/dynamic.html", (req, res) => {
     const options = createHeaders(req.query, null);
     res.set({"content-type":"text/html; charset=UTF-8", ...options });
     res.status(res.locals.statusCode).end(generateDynamicHTML(JSON.stringify(req.headers)));
 });
 
-app.all("/sample*.*", (req, res) => {
+app.post("/dynamic.html", (req, res) => {
+    const options = createHeaders(req.body, null);
+    res.set({"content-type":"text/html; charset=UTF-8", ...options });
+    res.status(res.locals.statusCode).end(generateDynamicHTML(JSON.stringify(req.headers)));
+});
+
+app.get("/sample*.*", (req, res) => {
     if(!isValidFileName(`${PUBLIC}${req.path}`)) {
         res.status(404).end()
     }
 
     const options = createHeaders(req.query, req.path);
+    res.contentType(path.extname(`${PUBLIC}${req.path}`));
+    res.status(res.locals.statusCode).sendFile(`${PUBLIC}${req.path}`, options);        
+});
+
+app.get("/sample*.*", (req, res) => {
+    if(!isValidFileName(`${PUBLIC}${req.path}`)) {
+        res.status(404).end()
+    }
+
+    const options = createHeaders(req.body, req.path);
     res.contentType(path.extname(`${PUBLIC}${req.path}`));
     res.status(res.locals.statusCode).sendFile(`${PUBLIC}${req.path}`, options);        
 });
