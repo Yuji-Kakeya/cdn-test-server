@@ -13,22 +13,36 @@ app.listen(HTTP_PORT);
 app.use(express.urlencoded({extended: true}));
 app.use(express.json());
 
-const options = {
-  key:  fs.readFileSync(`${__dirname}/cert/server.key`),
-  cert: fs.readFileSync(`${__dirname}/cert/server.crt`)
-};
-let server = https.createServer(options,app);
-server.listen(HTTPS_PORT);
-
 //Const
 const PUBLIC = (`${__dirname}/pub`);
 const HEADER_CACHE_CONTROL = "Cache-Control";
 const HEADER_CACHE_CONTROL_FROM_ORIGIN = "Cache-Control-From-Origin";
 const HEADER_LASTMODIFIED_FROM_ORIGIN = "Last-Modified-From-Origin";
 const HEADER_ETAG_FROM_ORIGIN = "Etag-From-Origin";
+const PRIVATE_KEY = `${__dirname}/cert/server.key`;
+const PUBLIC_KEY = `${__dirname}/cert/server.crt`
+
+const options = {
+  key:  fs.readFileSync(PRIVATE_KEY),
+  cert: fs.readFileSync(PUBLIC_KEY)
+};
+let server = https.createServer(options,app);
+server.listen(HTTPS_PORT);
+
+
 
 //Functions
+const isValidFileName = (file: string) => {
+    try{
+        return /\/[^._][^\/]+$/.test(file) && file !== "index.html" && fs.statSync(file).isFile()
+    }catch(e){
+        console.log(e)
+        return false;
+    }
+}
+
 const isNum = (num: string | number) => num != "" && !isNaN(num as number);
+const isCheckParameter = (params: any, param: string) => params[param] && params[param] === "true";
 const generateDynamicHTML = (req: string) => `<!DOCTYPE html><html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>Dynamic</title></head><body>This page was generated at ${Date()} dynamically. This page should not be cached by CDN. ${req}</body></html>`;
 const leftZeroPadding = (num: number) => String(num).replace(/^(\d)$/, "0$1");
 const modifyLastUpdate = (req: { subYear: string, subMonth: string, subDate: string, subHours: string, subMinutes: string }, path: string) => {
@@ -84,49 +98,89 @@ const createHeaders = (req: any, path: string|null) => {
 //Authentication
 app.use((req, res, next) => {
     res.removeHeader("Cache-Control");
-    if (req.query["auth"] == "true") {
+    if (isCheckParameter(req.query, "auth") || isCheckParameter(req.body, "auth")) {
         const user = auth(req);
 
         if (!user || user.name!=="test"|| user.pass !== "test" ) {
             res.set('WWW-Authenticate', 'Basic realm="example"');
             return res.status(401).send();
         }
+    }else{
+        return next();
     }
-    return next();
 });
+
+//304 Not Modified
+app.use((req, res, next) => {
+    if (isCheckParameter(req.query, "not-modified") || isCheckParameter(req.body, "not-modified")) {
+        res.status(304).end()
+    }else{
+        return next();
+    }
+});
+
+//Status Code
+app.use((req,res,next) => {
+    if(req.query["status-code"] && /^\d{3}$/.test(req.query["status-code"] as string)){
+        res.locals.statusCode = Number(req.query["status-code"])
+    }else{
+        res.locals.statusCode = 200
+    }
+    next();
+})
 
 //Express Routing
 app.get("/", (_, res) => {
     res.sendFile(`${PUBLIC}/index.html`);
 });
 
-app.get("/sample*.*", (req, res) => {
+app.all("/dynamic.html", (req, res) => {
+    const options = createHeaders(req.query, null);
+    res.set({"content-type":"text/html; charset=UTF-8", ...options });
+    res.status(res.locals.statusCode).end(generateDynamicHTML(JSON.stringify(req.headers)));
+});
+
+app.all("/sample*.*", (req, res) => {
+    if(!isValidFileName(`${PUBLIC}${req.path}`)) {
+        res.status(404).end()
+    }
+
     const options = createHeaders(req.query, req.path);
     res.contentType(path.extname(`${PUBLIC}${req.path}`));
-    res.sendFile(`${PUBLIC}${req.path}`, options);
+    res.status(res.locals.statusCode).sendFile(`${PUBLIC}${req.path}`, options);        
 });
 
-app.post("/sample*.*", (req, res) => {
-    const options = createHeaders(req.body, req.path);
-    res.contentType(path.extname(`${PUBLIC}${req.path}`));
-    res.sendFile(`${PUBLIC}${req.path}`, options);
-});
-
-app.get("/dynamic.html", (req, res) => {
-    const options = createHeaders(req.query, null);
-    res.set(options);
-    res.status(200).end(generateDynamicHTML(JSON.stringify(req.headers)));
-});
 
 app.get("/key", (req,res) => {
-    res.sendFile(`${__dirname}/cert/server.key`);
+    if(!isValidFileName(PRIVATE_KEY)){
+        res.status(404).end();
+    }
+    res.sendFile(PRIVATE_KEY);
 });
 
-app.post("/dynamic.html", (req, res) => {
-    const options = createHeaders(req.body, null);
-    res.set(options);
-    res.status(200).end(generateDynamicHTML(JSON.stringify(req.headers)));
+app.get("/cert", (req,res) => {
+    if(!isValidFileName(PUBLIC_KEY)){
+        res.status(404).end();
+    }
+    res.sendFile(PUBLIC_KEY)
+})
+
+app.get("/rootca", (req,res) => {
+    if(!isValidFileName(`${__dirname}/cert/RootCA/RootCA.crt`)){
+        res.status(404).end();
+    }
+    res.sendFile(`${__dirname}/cert/RootCA/RootCA.crt`);
 });
+
+app.get("/api/v1/files", (req,res) => {
+    fs.readdir(`${PUBLIC}/.`, (err, files) => {
+        if(err){
+            res.status(404).end();
+        }
+        let fileList = files.filter(file => isValidFileName(`${PUBLIC}/${file}`));
+            res.status(200).json({files: fileList});
+    })
+})
 
 console.log(`Running HTTP Server on port ${HTTP_PORT}!`);
 console.log(`Running HTTPS Server on port ${HTTPS_PORT}!`);

@@ -1,9 +1,9 @@
 FROM node:17-alpine3.12 AS builder
 WORKDIR /usr/src/
-COPY src/ ./
 COPY package*.json ./
 RUN ["npm", "install"]
 RUN ["npm", "install", "typescript"]
+COPY src/ ./
 RUN ["npx", "tsc"]
 
 FROM node:17-alpine3.12
