@@ -10,7 +10,7 @@ import path from "path";
 
 const app = express();
 app.listen(HTTP_PORT);
-app.use(express.urlencoded({extended: true}));
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 //Const
@@ -23,19 +23,19 @@ const PRIVATE_KEY = `${__dirname}/cert/server.key`;
 const PUBLIC_KEY = `${__dirname}/cert/server.crt`
 
 const options = {
-  key:  fs.readFileSync(PRIVATE_KEY),
-  cert: fs.readFileSync(PUBLIC_KEY)
+    key: fs.readFileSync(PRIVATE_KEY),
+    cert: fs.readFileSync(PUBLIC_KEY)
 };
-let server = https.createServer(options,app);
+let server = https.createServer(options, app);
 server.listen(HTTPS_PORT);
 
 
 
 //Functions
 const isValidFileName = (file: string) => {
-    try{
+    try {
         return /\/[^._][^\/]+$/.test(file) && file !== "index.html" && fs.statSync(file).isFile()
-    }catch(e){
+    } catch (e) {
         console.log(e)
         return false;
     }
@@ -71,17 +71,19 @@ const modifyLastUpdate = (req: { subYear: string, subMonth: string, subDate: str
 
 }
 
-const createHeaders = (req: any, path: string|null) => {
+const createHeaders = (req: any, path: string | null) => {
+    const EXPIRATIONS = ["max-age", "s-maxage", "max-stale", "min-fresh", "stale-while-revalidate", "stale-if-error"];
+
     let cacheControls = req.cacheability == "" ? [] : [req.cacheability];
-    for (let key in req) {
-        if (isNum(req[key]) && !/^sub/.test(key)) {
-            cacheControls.push(`${key}=${req[key]}`);
-        }
+
+    for (let key of Object.keys(req).filter((key: string) => EXPIRATIONS.indexOf(key) + 1)) {
+        isNum(req[key]) && cacheControls.push(`${key}=${req[key]}`);
     }
-    const cacheControl = cacheControls.join(", ");
-    const isLastModified = req["last-modified"] == "true";
-    const isEtag = req["etag"] == "true";
-    const lastModifiedValue = (isLastModified && path != null) ? modifyLastUpdate(req, path) : "Notchange";
+
+    let cacheControl = cacheControls.join(", ");
+    let isLastModified = req["last-modified"] == "true";
+    let isEtag = req["etag"] == "true";
+    let lastModifiedValue = (isLastModified && path != null) ? modifyLastUpdate(req, path) : "NonChange";
 
     return {
         lastModified: isLastModified,
@@ -101,11 +103,11 @@ app.use((req, res, next) => {
     if (isCheckParameter(req.query, "auth") || isCheckParameter(req.body, "auth")) {
         const user = auth(req);
 
-        if (!user || user.name!=="test"|| user.pass !== "test" ) {
+        if (!user || user.name !== "test" || user.pass !== "test") {
             res.set('WWW-Authenticate', 'Basic realm="example"');
             return res.status(401).send();
         }
-    }else{
+    } else {
         return next();
     }
 });
@@ -114,16 +116,16 @@ app.use((req, res, next) => {
 app.use((req, res, next) => {
     if (isCheckParameter(req.query, "not-modified") || isCheckParameter(req.body, "not-modified")) {
         res.status(304).end()
-    }else{
+    } else {
         return next();
     }
 });
 
 //Status Code
-app.use((req,res,next) => {
-    if(req.query["status-code"] && /^\d{3}$/.test(req.query["status-code"] as string)){
+app.use((req, res, next) => {
+    if (req.query["status-code"] && /^\d{3}$/.test(req.query["status-code"] as string)) {
         res.locals.statusCode = Number(req.query["status-code"])
-    }else{
+    } else {
         res.locals.statusCode = 200
     }
     next();
@@ -136,65 +138,65 @@ app.get("/", (_, res) => {
 
 app.get("/dynamic.html", (req, res) => {
     const options = createHeaders(req.query, null);
-    res.set({"content-type":"text/html; charset=UTF-8", ...options });
+    res.set({ "content-type": "text/html; charset=UTF-8", [HEADER_CACHE_CONTROL]:options.headers[HEADER_CACHE_CONTROL], [HEADER_CACHE_CONTROL_FROM_ORIGIN]:options.headers[HEADER_CACHE_CONTROL] });
     res.status(res.locals.statusCode).end(generateDynamicHTML(JSON.stringify(req.headers)));
 });
 
 app.post("/dynamic.html", (req, res) => {
     const options = createHeaders(req.body, null);
-    res.set({"content-type":"text/html; charset=UTF-8", ...options });
+    res.set({ "content-type": "text/html; charset=UTF-8", [HEADER_CACHE_CONTROL]:options.headers[HEADER_CACHE_CONTROL], [HEADER_CACHE_CONTROL_FROM_ORIGIN]:options.headers[HEADER_CACHE_CONTROL] });
     res.status(res.locals.statusCode).end(generateDynamicHTML(JSON.stringify(req.headers)));
 });
 
 app.get("/sample*.*", (req, res) => {
-    if(!isValidFileName(`${PUBLIC}${req.path}`)) {
+    if (!isValidFileName(`${PUBLIC}${req.path}`)) {
         res.status(404).end()
     }
 
     const options = createHeaders(req.query, req.path);
     res.contentType(path.extname(`${PUBLIC}${req.path}`));
-    res.status(res.locals.statusCode).sendFile(`${PUBLIC}${req.path}`, options);        
+    res.status(res.locals.statusCode).sendFile(`${PUBLIC}${req.path}`, options);
 });
 
 app.get("/sample*.*", (req, res) => {
-    if(!isValidFileName(`${PUBLIC}${req.path}`)) {
+    if (!isValidFileName(`${PUBLIC}${req.path}`)) {
         res.status(404).end()
     }
 
     const options = createHeaders(req.body, req.path);
     res.contentType(path.extname(`${PUBLIC}${req.path}`));
-    res.status(res.locals.statusCode).sendFile(`${PUBLIC}${req.path}`, options);        
+    res.status(res.locals.statusCode).sendFile(`${PUBLIC}${req.path}`, options);
 });
 
 
-app.get("/key", (req,res) => {
-    if(!isValidFileName(PRIVATE_KEY)){
+app.get("/key", (req, res) => {
+    if (!isValidFileName(PRIVATE_KEY)) {
         res.status(404).end();
     }
     res.sendFile(PRIVATE_KEY);
 });
 
-app.get("/cert", (req,res) => {
-    if(!isValidFileName(PUBLIC_KEY)){
+app.get("/cert", (req, res) => {
+    if (!isValidFileName(PUBLIC_KEY)) {
         res.status(404).end();
     }
     res.sendFile(PUBLIC_KEY)
 })
 
-app.get("/rootca", (req,res) => {
-    if(!isValidFileName(`${__dirname}/cert/RootCA/RootCA.crt`)){
+app.get("/rootca", (req, res) => {
+    if (!isValidFileName(`${__dirname}/cert/RootCA/RootCA.crt`)) {
         res.status(404).end();
     }
     res.sendFile(`${__dirname}/cert/RootCA/RootCA.crt`);
 });
 
-app.get("/api/v1/files", (req,res) => {
+app.get("/api/v1/files", (req, res) => {
     fs.readdir(`${PUBLIC}/.`, (err, files) => {
-        if(err){
+        if (err) {
             res.status(404).end();
         }
         let fileList = files.filter(file => isValidFileName(`${PUBLIC}/${file}`));
-            res.status(200).json({files: fileList});
+        res.status(200).json({ files: fileList });
     })
 })
 
