@@ -6,7 +6,7 @@ L=example
 O=example
 
 WILDCARD=`echo $1 | sed -e "s/^[^.]*/*/g"`
-echo "subjectAltName=DNS:$1, DNS:${WILDCARD}" > $1/_san.conf
+echo "subjectAltName=DNS:$1, DNS:${WILDCARD}" > ./dist/cert/_san.conf
 openssl genrsa -passout pass:${PASSWORD} -aes256 -out ./dist/cert/_server.key 2048
 openssl rsa -passin pass:${PASSWORD} -in ./dist/cert/_server.key -out ./dist/cert/server.key
 openssl req -new -key ./dist/cert/server.key -out ./dist/cert/_request.csr -subj "/C=${C}/ST=${ST}/L=${L}/O=${O}/CN=$1"
